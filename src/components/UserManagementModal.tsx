@@ -139,7 +139,7 @@ export default function UserManagementModal({
                   placeholder="Nama Lengkap"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full mt-1 border p-2 rounded text-xs bg-white dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full mt-1 border p-2 rounded text-xs bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700"
                 />
               </div>
 
@@ -151,7 +151,7 @@ export default function UserManagementModal({
                   placeholder="nama@digmar.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full mt-1 border p-2 rounded text-xs bg-white dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full mt-1 border p-2 rounded text-xs bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700"
                 />
               </div>
 
@@ -165,7 +165,7 @@ export default function UserManagementModal({
                   placeholder={editUser ? '••••••••' : 'Minimal 6 karakter'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full mt-1 border p-2 rounded text-xs bg-white dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full mt-1 border p-2 rounded text-xs bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700"
                 />
               </div>
 
@@ -174,7 +174,7 @@ export default function UserManagementModal({
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full mt-1 border p-2 rounded text-xs bg-white dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full mt-1 border p-2 rounded text-xs bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700"
                 >
                   <option value="MARKETING">MARKETING</option>
                   <option value="ADMIN">ADMIN</option>

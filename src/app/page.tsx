@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import KanbanBoard from '@/components/KanbanBoard';
-import MapView from '@/components/MapView';
-import DealModal from '@/components/DealModal';
-import DealActivityModal from '@/components/DealActivityModal';
-import UserManagementModal from '@/components/UserManagementModal';
+import KanbanBoard from '../components/KanbanBoard';
+import MapView from '../components/MapView';
+import DealModal from '../components/DealModal';
+import DealActivityModal from '../components/DealActivityModal';
+import UserManagementModal from '../components/UserManagementModal';
 import { 
   Plus, 
   Filter, 
   Users, 
-  UserCheck,
+  UserCheck, 
   LogOut, 
   Calendar, 
   Target, 

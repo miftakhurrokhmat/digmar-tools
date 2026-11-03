@@ -17,9 +17,13 @@ export default function DealActivityModal({
 
   const fetchActivities = async () => {
     if (!deal) return;
-    const res = await fetch(`/api/deals/${deal.id}/activities`);
-    const data = await res.json();
-    if (Array.isArray(data)) setActivities(data);
+    try {
+      const res = await fetch(`/api/deals/${deal.id}/activities`);
+      const data = await res.json();
+      if (Array.isArray(data)) setActivities(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -34,16 +38,20 @@ export default function DealActivityModal({
     if (!notes.trim() || !deal) return;
 
     setLoading(true);
-    const res = await fetch(`/api/deals/${deal.id}/activities`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ activityType, notes }),
-    });
+    try {
+      const res = await fetch(`/api/deals/${deal.id}/activities`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ activityType, notes }),
+      });
 
-    setLoading(false);
-    if (res.ok) {
-      setNotes('');
-      fetchActivities();
+      setLoading(false);
+      if (res.ok) {
+        setNotes('');
+        fetchActivities();
+      }
+    } catch (err) {
+      setLoading(false);
     }
   };
 

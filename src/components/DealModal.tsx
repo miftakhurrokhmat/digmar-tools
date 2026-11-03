@@ -145,7 +145,7 @@ export default function DealModal({
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
                 placeholder="Contoh: Pak Budi"
-                className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -154,7 +154,7 @@ export default function DealModal({
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="Contoh: PT Telkom / Mandiri"
-                className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function DealModal({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="0812xxxx"
-                className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -178,7 +178,7 @@ export default function DealModal({
                 value={dealValue}
                 onChange={(e) => setDealValue(e.target.value)}
                 placeholder="10000000"
-                className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent font-semibold"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-transparent font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -189,7 +189,7 @@ export default function DealModal({
               <select
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
-                className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="PROFESSIONAL_TRAINING">Pelatihan Profesional</option>
                 <option value="KIDS_MENTORING">Mentoring Anak</option>
@@ -200,7 +200,7 @@ export default function DealModal({
               <select
                 value={customerType}
                 onChange={(e) => setCustomerType(e.target.value)}
-                className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="B2C_PRO_SMK">B2C (Profesional / SMK)</option>
                 <option value="B2C_STUDENT_PARENT">B2C (Siswa / Orang Tua)</option>
@@ -215,7 +215,7 @@ export default function DealModal({
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="Contoh: Power BI, Data Analytics, Python IoT"
-              className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent"
+              className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
@@ -227,7 +227,7 @@ export default function DealModal({
                 type="month"
                 value={targetPeriod}
                 onChange={(e) => setTargetPeriod(e.target.value)}
-                className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
             <div>
@@ -235,7 +235,7 @@ export default function DealModal({
               <select
                 value={cityId}
                 onChange={(e) => handleCityChange(e.target.value)}
-                className="mt-1 w-full border rounded-lg p-2 dark:border-slate-700 bg-transparent"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 {cities.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -250,14 +250,14 @@ export default function DealModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-slate-500 hover:bg-slate-100 rounded-lg"
+              className="px-4 py-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg disabled:opacity-50"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition disabled:opacity-50"
             >
               {loading ? 'Menyimpan...' : dealToEdit ? 'Simpan Perubahan' : 'Buat Target Deal'}
             </button>

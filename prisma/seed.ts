@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Memulai proses seeding...');
 
-  // 1. Seed Akun Default (Admin & Marketing)
   const defaultPassword = await bcrypt.hash('admin123', 10);
 
   await prisma.user.upsert({
@@ -31,7 +30,6 @@ async function main() {
     },
   });
 
-  // 2. Seed Master Tahapan Pipeline
   const defaultStages = [
     { name: 'Lead In', order: 1, colorHex: '#3b82f6' },
     { name: 'Contacted', order: 2, colorHex: '#8b5cf6' },
@@ -48,7 +46,6 @@ async function main() {
     });
   }
 
-  // 3. Seed Master Wilayah (5 DIY + 7 Solo Raya)
   const defaultCities = [
     { name: 'Kota Yogyakarta', region: 'D.I. Yogyakarta', latitude: -7.7956, longitude: 110.3695, zoom: 13 },
     { name: 'Kab. Sleman', region: 'D.I. Yogyakarta', latitude: -7.7161, longitude: 110.3556, zoom: 12 },
@@ -77,7 +74,7 @@ async function main() {
     });
   }
 
-  console.log('✓ Seeding selesai 100%!');
+  console.log('✓ Seeding database sukses!');
 }
 
 main()
