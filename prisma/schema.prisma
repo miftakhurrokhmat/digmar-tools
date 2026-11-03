@@ -1,0 +1,78 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("MARKETING") // ADMIN | MARKETING
+  
+  deals     Deal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model City {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  region    String   // D.I. Yogyakarta | Solo Raya
+  latitude  Float
+  longitude Float
+  zoom      Int      @default(12)
+  deals     Deal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Stage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  order     Int      @unique
+  colorHex  String?
+  deals     Deal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Deal {
+  id              String         @id @default(uuid())
+  clientName      String
+  companyName     String?
+  phone           String
+  dealValue       Float
+  productCategory String         @default("PROFESSIONAL_TRAINING") // PROFESSIONAL_TRAINING | KIDS_MENTORING
+  customerType    String         @default("B2C_PRO_SMK")           // B2C_PRO_SMK | B2C_STUDENT_PARENT | B2B_CORP_GOV_CAMPUS
+  topic           String?
+  targetPeriod    String         // YYYY-MM
+  
+  cityId          Int
+  city            City           @relation(fields: [cityId], references: [id])
+  latitude        Float
+  longitude       Float
+
+  stageId         Int            @default(1)
+  stage           Stage          @relation(fields: [stageId], references: [id])
+
+  createdById     String?
+  createdBy       User?          @relation(fields: [createdById], references: [id])
+
+  activities      DealActivity[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model DealActivity {
+  id           String   @id @default(uuid())
+  dealId       String
+  deal         Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  activityType String   // WHATSAPP | CALL | MEETING | NOTE
+  notes        String
+  createdAt    DateTime @default(now())
+}
