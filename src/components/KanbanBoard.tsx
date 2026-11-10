@@ -1,7 +1,7 @@
 'use client';
 
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { MessageSquare, Pencil, Trash2, User, Calendar, MapPin } from 'lucide-react';
+import { MessageSquare, Pencil, Trash2, User, Calendar, MapPin, MessageCircle } from 'lucide-react';
 
 interface Deal {
   id: string;
@@ -100,6 +100,25 @@ export default function KanbanBoard({
     }
   };
 
+  // Helper untuk membersihkan nomor & mengubah ke format internasional (62)
+  const formatWhatsAppUrl = (deal: Deal) => {
+    if (!deal.phone) return '#';
+    let cleanPhone = deal.phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '62' + cleanPhone.slice(1);
+    } else if (cleanPhone.startsWith('8')) {
+      cleanPhone = '62' + cleanPhone;
+    }
+
+    const program = deal.productCategory === 'KIDS_MENTORING' ? 'Program Mentoring Anak' : 'Program Pelatihan Profesional';
+    const topicText = deal.topic ? ` terkait topik *${deal.topic}*` : '';
+    const instansiText = deal.companyName ? ` di *${deal.companyName}*` : '';
+
+    const message = `Halo *${deal.clientName}*${instansiText},\n\nSalam dari tim Digital Marketing. Kami ingin follow-up mengenai rencana ${program}${topicText}. Apakah ada waktu luang untuk berdiskusi lebih lanjut? Terima kasih.`;
+
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+  };
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 overflow-x-auto pb-4 items-start">
@@ -139,11 +158,10 @@ export default function KanbanBoard({
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`bg-white dark:bg-slate-800/95 border rounded-xl p-3.5 transition-all relative group ${
-                              snapshot.isDragging
+                            className={`bg-white dark:bg-slate-800/95 border rounded-xl p-3.5 transition-all relative group ${snapshot.isDragging
                                 ? 'shadow-xl ring-2 ring-blue-500/50 border-transparent rotate-1'
                                 : 'border-slate-200/90 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600'
-                            }`}
+                              }`}
                           >
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex-1 min-w-0 pr-1">
@@ -158,6 +176,20 @@ export default function KanbanBoard({
                               </div>
 
                               <div className="flex items-center gap-1 shrink-0">
+                                {/* Shortcut Tombol WhatsApp */}
+                                {deal.phone && (
+                                  <a
+                                    href={formatWhatsAppUrl(deal)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="p-1 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-md transition"
+                                    title={`Chat WhatsApp (${deal.phone})`}
+                                  >
+                                    <MessageCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                                  </a>
+                                )}
+
                                 <button
                                   type="button"
                                   onClick={(e) => {
@@ -208,11 +240,10 @@ export default function KanbanBoard({
 
                             <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
                               <span
-                                className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${
-                                  deal.productCategory === 'KIDS_MENTORING'
+                                className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${deal.productCategory === 'KIDS_MENTORING'
                                     ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800'
                                     : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
-                                }`}
+                                  }`}
                               >
                                 {deal.productCategory === 'KIDS_MENTORING'
                                   ? 'Mentoring Anak'
