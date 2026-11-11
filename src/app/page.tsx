@@ -7,6 +7,9 @@ import MapView from '../components/MapView';
 import DealModal from '../components/DealModal';
 import DealActivityModal from '../components/DealActivityModal';
 import UserManagementModal from '../components/UserManagementModal';
+import SendProposalModal from '../components/SendProposalModal';
+import SmtpSettingsModal from '../components/SmtpSettingsModal';
+import CommunicationLogsModal from '../components/CommunicationLogsModal';
 import {
   Plus,
   Filter,
@@ -19,7 +22,10 @@ import {
   CheckCircle2,
   Layers,
   MapPin,
-  Download
+  Download,
+  MailCheck,
+  History,
+  Mail
 } from 'lucide-react';
 
 interface City {
@@ -43,6 +49,19 @@ export default function DashboardPage() {
 
   const [currentUser, setCurrentUser] = useState<any | null>(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isSmtpModalOpen, setIsSmtpModalOpen] = useState(false);
+  const [isCommLogsOpen, setIsCommLogsOpen] = useState(false);
+
+  // Counter Kuota Terpusat (Terlihat oleh semua akun)
+  const [emailQuota, setEmailQuota] = useState<{
+    dailyEmailLimit: number;
+    dailyEmailSentCount: number;
+    remaining: number;
+  }>({
+    dailyEmailLimit: 50,
+    dailyEmailSentCount: 0,
+    remaining: 50,
+  });
 
   const [deals, setDeals] = useState<any[]>([]);
   const [cities, setCities] = useState<City[]>([]);
@@ -54,6 +73,19 @@ export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dealToEdit, setDealToEdit] = useState<any | null>(null);
   const [activeActivityDeal, setActiveActivityDeal] = useState<any | null>(null);
+  const [proposalDeal, setProposalDeal] = useState<any | null>(null);
+
+  const fetchQuota = async () => {
+    try {
+      const res = await fetch('/api/settings/smtp/quota');
+      const data = await res.json();
+      if (data && typeof data.dailyEmailLimit === 'number') {
+        setEmailQuota(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const handleExportCsv = () => {
     const params = new URLSearchParams();
@@ -61,7 +93,6 @@ export default function DashboardPage() {
     if (selectedPeriod) params.append('period', selectedPeriod);
     if (selectedUserId) params.append('userId', selectedUserId);
 
-    // Memicu browser mengunduh file secara otomatis
     window.location.href = `/api/deals/export?${params.toString()}`;
   };
 
@@ -105,7 +136,10 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    if (currentUser) fetchUsers();
+    if (currentUser) {
+      fetchUsers();
+      fetchQuota();
+    }
   }, [currentUser]);
 
   const fetchDeals = async () => {
@@ -162,6 +196,7 @@ export default function DashboardPage() {
       });
     }
     fetchDeals();
+    fetchQuota();
     setDealToEdit(null);
   };
 
@@ -206,7 +241,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* User Profile & Actions (Tampil di kanan atas pada layar non-2XL) */}
+              {/* User Profile & Actions (Layar non-2XL) */}
               <div className="flex items-center gap-2 shrink-0 2xl:hidden">
                 {currentUser && (
                   <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700">
@@ -224,15 +259,35 @@ export default function DashboardPage() {
                   </div>
                 )}
 
+                <button
+                  type="button"
+                  onClick={() => setIsCommLogsOpen(true)}
+                  className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                  title="Audit Log Pesan (WA & Email)"
+                >
+                  <History className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                </button>
+
                 {currentUser?.role === 'ADMIN' && (
-                  <button
-                    type="button"
-                    onClick={() => setIsUserModalOpen(true)}
-                    className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
-                    title="Kelola Akun"
-                  >
-                    <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setIsSmtpModalOpen(true)}
+                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                      title="Konfigurasi SMTP Email & Batas Kuota"
+                    >
+                      <MailCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsUserModalOpen(true)}
+                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                      title="Kelola Akun"
+                    >
+                      <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    </button>
+                  </>
                 )}
 
                 <button
@@ -246,8 +301,24 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Deretan Filter Controls & Action Buttons */}
+            {/* Deretan Filter Controls, Indikator Kuota Terpusat & Action Buttons */}
             <div className="flex flex-wrap items-center gap-2 pt-2 2xl:pt-0 border-t 2xl:border-t-0 border-slate-100 dark:border-slate-800">
+
+              {/* INDIKATOR KUOTA TERPUSAT (Terlihat untuk semua akun sales & admin) */}
+              <div
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/80 dark:bg-blue-950/40 text-xs shrink-0 cursor-pointer"
+                title={`Kuota Bersama Hari Ini: ${emailQuota.dailyEmailSentCount} terpakai dari ${emailQuota.dailyEmailLimit} limit email`}
+                onClick={() => fetchQuota()}
+              >
+                <Mail className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                <span className="text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">Kuota Email:</span>
+                <span className="font-bold text-blue-700 dark:text-blue-300">
+                  {emailQuota.dailyEmailSentCount}/{emailQuota.dailyEmailLimit}
+                </span>
+                <span className="text-[10px] text-blue-500 font-medium">
+                  (Sisa {emailQuota.remaining})
+                </span>
+              </div>
 
               {/* Filter Bulan */}
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/50 text-xs shrink-0">
@@ -318,7 +389,7 @@ export default function DashboardPage() {
                 </select>
               </div>
 
-              {/* Cluster Tombol Ekspor & Tambah Deal (Selalu berdampingan) */}
+              {/* Cluster Tombol Ekspor & Tambah Deal */}
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
@@ -343,7 +414,7 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              {/* User Profile (Hanya tampil di posisi kanan ujung pada layar 2XL) */}
+              {/* User Profile (Tampil di kanan ujung pada layar 2XL) */}
               <div className="hidden 2xl:flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-700 ml-1 shrink-0">
                 {currentUser && (
                   <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700">
@@ -361,15 +432,35 @@ export default function DashboardPage() {
                   </div>
                 )}
 
+                <button
+                  type="button"
+                  onClick={() => setIsCommLogsOpen(true)}
+                  className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                  title="Audit Log Pesan (WA & Email)"
+                >
+                  <History className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                </button>
+
                 {currentUser?.role === 'ADMIN' && (
-                  <button
-                    type="button"
-                    onClick={() => setIsUserModalOpen(true)}
-                    className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
-                    title="Kelola Akun"
-                  >
-                    <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setIsSmtpModalOpen(true)}
+                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                      title="Konfigurasi SMTP Email & Batas Kuota"
+                    >
+                      <MailCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsUserModalOpen(true)}
+                      className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                      title="Kelola Akun"
+                    >
+                      <Users className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    </button>
+                  </>
                 )}
 
                 <button
@@ -470,6 +561,7 @@ export default function DashboardPage() {
             deals={deals}
             onStageChange={handleStageChange}
             onOpenActivity={(deal) => setActiveActivityDeal(deal)}
+            onOpenProposal={(deal) => setProposalDeal(deal)}
             onEditDeal={handleOpenEdit}
             onDeleteDeal={handleDeleteDeal}
           />
@@ -489,6 +581,28 @@ export default function DashboardPage() {
         <DealActivityModal
           deal={activeActivityDeal}
           onClose={() => setActiveActivityDeal(null)}
+        />
+
+        <SendProposalModal
+          deal={proposalDeal}
+          isOpen={Boolean(proposalDeal)}
+          onClose={() => setProposalDeal(null)}
+          onSuccess={(updatedDeal) => {
+            handleDealSaved(updatedDeal);
+          }}
+        />
+
+        <SmtpSettingsModal
+          isOpen={isSmtpModalOpen}
+          onClose={() => {
+            setIsSmtpModalOpen(false);
+            fetchQuota();
+          }}
+        />
+
+        <CommunicationLogsModal
+          isOpen={isCommLogsOpen}
+          onClose={() => setIsCommLogsOpen(false)}
         />
 
         <UserManagementModal

@@ -14,6 +14,7 @@ export async function PATCH(
     if (body.clientName !== undefined) dataToUpdate.clientName = body.clientName;
     if (body.companyName !== undefined) dataToUpdate.companyName = body.companyName;
     if (body.phone !== undefined) dataToUpdate.phone = body.phone;
+    if (body.email !== undefined) dataToUpdate.email = body.email;
     if (body.dealValue !== undefined) dataToUpdate.dealValue = parseFloat(body.dealValue);
     if (body.productCategory !== undefined) dataToUpdate.productCategory = body.productCategory;
     if (body.customerType !== undefined) dataToUpdate.customerType = body.customerType;

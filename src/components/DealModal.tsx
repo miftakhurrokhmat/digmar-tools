@@ -27,6 +27,7 @@ export default function DealModal({
   const [clientName, setClientName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [dealValue, setDealValue] = useState('');
   const [productCategory, setProductCategory] = useState('PROFESSIONAL_TRAINING');
   const [customerType, setCustomerType] = useState('B2C_PRO_SMK');
@@ -43,6 +44,7 @@ export default function DealModal({
       setClientName(dealToEdit.clientName || '');
       setCompanyName(dealToEdit.companyName || '');
       setPhone(dealToEdit.phone || '');
+      setEmail(dealToEdit.email || '');
       setDealValue(dealToEdit.dealValue?.toString() || '');
       setProductCategory(dealToEdit.productCategory || 'PROFESSIONAL_TRAINING');
       setCustomerType(dealToEdit.customerType || 'B2C_PRO_SMK');
@@ -57,6 +59,7 @@ export default function DealModal({
       setClientName('');
       setCompanyName('');
       setPhone('');
+      setEmail('');
       setDealValue('');
       setProductCategory('PROFESSIONAL_TRAINING');
       setCustomerType('B2C_PRO_SMK');
@@ -88,6 +91,7 @@ export default function DealModal({
       clientName,
       companyName,
       phone,
+      email: email || null,
       dealValue: parseFloat(dealValue),
       productCategory,
       customerType,
@@ -125,7 +129,7 @@ export default function DealModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
       <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl border border-slate-200 dark:border-slate-800 p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
           <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">
@@ -171,6 +175,19 @@ export default function DealModal({
               />
             </div>
             <div>
+              <label className="font-semibold text-slate-600 dark:text-slate-300">Email Klien (Opsional)</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="klien@instansi.com"
+                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
               <label className="font-semibold text-slate-600 dark:text-slate-300">Estimasi Nilai Deal (Rp) *</label>
               <input
                 required
@@ -181,9 +198,6 @@ export default function DealModal({
                 className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-transparent font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="font-semibold text-slate-600 dark:text-slate-300">Kategori Produk *</label>
               <select
@@ -195,18 +209,19 @@ export default function DealModal({
                 <option value="KIDS_MENTORING">Mentoring Anak</option>
               </select>
             </div>
-            <div>
-              <label className="font-semibold text-slate-600 dark:text-slate-300">Segmentasi Customer *</label>
-              <select
-                value={customerType}
-                onChange={(e) => setCustomerType(e.target.value)}
-                className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              >
-                <option value="B2C_PRO_SMK">B2C (Profesional / SMK)</option>
-                <option value="B2C_STUDENT_PARENT">B2C (Siswa / Orang Tua)</option>
-                <option value="B2B_CORP_GOV_CAMPUS">B2B (Korporat / Kampus / Instansi)</option>
-              </select>
-            </div>
+          </div>
+
+          <div>
+            <label className="font-semibold text-slate-600 dark:text-slate-300">Segmentasi Customer *</label>
+            <select
+              value={customerType}
+              onChange={(e) => setCustomerType(e.target.value)}
+              className="mt-1 w-full border rounded-lg p-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            >
+              <option value="B2C_PRO_SMK">B2C (Profesional / SMK)</option>
+              <option value="B2C_STUDENT_PARENT">B2C (Siswa / Orang Tua)</option>
+              <option value="B2B_CORP_GOV_CAMPUS">B2B (Korporat / Kampus / Instansi)</option>
+            </select>
           </div>
 
           <div>

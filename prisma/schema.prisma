@@ -15,6 +15,7 @@ model User {
   role      String   @default("MARKETING") // ADMIN | MARKETING
   
   deals     Deal[]
+  logs      CommunicationLog[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -46,6 +47,7 @@ model Deal {
   clientName      String
   companyName     String?
   phone           String
+  email           String?        // Kolom Email permanen di tabel Deal
   dealValue       Float
   productCategory String         @default("PROFESSIONAL_TRAINING") // PROFESSIONAL_TRAINING | KIDS_MENTORING
   customerType    String         @default("B2C_PRO_SMK")           // B2C_PRO_SMK | B2C_STUDENT_PARENT | B2B_CORP_GOV_CAMPUS
@@ -64,6 +66,7 @@ model Deal {
   createdBy       User?          @relation(fields: [createdById], references: [id])
 
   activities      DealActivity[]
+  commLogs        CommunicationLog[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 }
@@ -75,4 +78,39 @@ model DealActivity {
   activityType String   // WHATSAPP | CALL | MEETING | NOTE
   notes        String
   createdAt    DateTime @default(now())
+}
+
+// Tabel Terpadu Audit Log Komunikasi (WhatsApp & Email)
+model CommunicationLog {
+  id           String   @id @default(uuid())
+  channel      String   // "EMAIL" | "WHATSAPP"
+  recipient    String   // Nomor WA atau Email tujuan
+  subject      String?  // Subjek proposal (jika kanal email)
+  status       String   // "SENT" | "FAILED"
+  errorMessage String?  // Keterangan error jika gagal kirim
+  metadata     String?  // Detail lampiran atau trigger
+  
+  dealId       String
+  deal         Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  senderId     String?
+  sender       User?    @relation(fields: [senderId], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime @default(now())
+}
+
+// Konfigurasi SMTP Bersama & Kuota Harian Terpusat
+model SmtpConfig {
+  id        Int      @id @default(1)
+  host      String   @default("smtp.gmail.com")
+  port      Int      @default(587)
+  secure    Boolean  @default(false)
+  user      String
+  pass      String
+  fromName  String   @default("Digital Marketing Team")
+  fromEmail String
+  dailyEmailLimit     Int      @default(50)
+  dailyEmailSentCount Int      @default(0)
+  lastResetDate       DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

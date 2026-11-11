@@ -1,13 +1,14 @@
 'use client';
 
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { MessageSquare, Pencil, Trash2, User, Calendar, MapPin, MessageCircle } from 'lucide-react';
+import { MessageSquare, Pencil, Trash2, User, Calendar, MapPin, MessageCircle, Mail } from 'lucide-react';
 
 interface Deal {
   id: string;
   clientName: string;
   companyName?: string | null;
   phone?: string;
+  email?: string | null;
   dealValue: number;
   productCategory?: string;
   customerType?: string;
@@ -33,6 +34,7 @@ export default function KanbanBoard({
   deals,
   onStageChange,
   onOpenActivity,
+  onOpenProposal,
   onEditDeal,
   onDeleteDeal,
 }: {
@@ -40,6 +42,7 @@ export default function KanbanBoard({
   deals: Deal[];
   onStageChange: (dealId: string, newStageId: number) => void;
   onOpenActivity: (deal: Deal) => void;
+  onOpenProposal: (deal: Deal) => void;
   onEditDeal: (deal: Deal) => void;
   onDeleteDeal: (dealId: string) => void;
 }) {
@@ -100,7 +103,6 @@ export default function KanbanBoard({
     }
   };
 
-  // Helper untuk membersihkan nomor & mengubah ke format internasional (62)
   const formatWhatsAppUrl = (deal: Deal) => {
     if (!deal.phone) return '#';
     let cleanPhone = deal.phone.replace(/[^0-9]/g, '');
@@ -117,6 +119,25 @@ export default function KanbanBoard({
     const message = `Halo *${deal.clientName}*${instansiText},\n\nSalam dari tim Digital Marketing. Kami ingin follow-up mengenai rencana ${program}${topicText}. Apakah ada waktu luang untuk berdiskusi lebih lanjut? Terima kasih.`;
 
     return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+  };
+
+  const handleWhatsAppAction = async (deal: Deal) => {
+    try {
+      await fetch('/api/communication-logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channel: 'WHATSAPP',
+          recipient: deal.phone,
+          dealId: deal.id,
+          status: 'SENT',
+          metadata: 'Direct click via Kanban card shortcut',
+        }),
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    window.open(formatWhatsAppUrl(deal), '_blank');
   };
 
   return (
@@ -176,18 +197,34 @@ export default function KanbanBoard({
                               </div>
 
                               <div className="flex items-center gap-1 shrink-0">
-                                {/* Shortcut Tombol WhatsApp */}
+                                {/* Tombol Direct Chat WhatsApp + Audit Log */}
                                 {deal.phone && (
-                                  <a
-                                    href={formatWhatsAppUrl(deal)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleWhatsAppAction(deal);
+                                    }}
                                     className="p-1 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-md transition"
                                     title={`Chat WhatsApp (${deal.phone})`}
                                   >
                                     <MessageCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                                  </a>
+                                  </button>
+                                )}
+
+                                {/* Tombol Kirim Proposal Email */}
+                                {(deal.stageId === 1 || deal.stageId === 2) && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onOpenProposal(deal);
+                                    }}
+                                    className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 rounded-md transition"
+                                    title="Kirim Proposal via Email"
+                                  >
+                                    <Mail className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                                  </button>
                                 )}
 
                                 <button

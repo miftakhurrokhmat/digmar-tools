@@ -42,6 +42,7 @@ export async function POST(request: Request) {
         clientName: body.clientName,
         companyName: body.companyName || null,
         phone: body.phone,
+        email: body.email || null,
         dealValue: parseFloat(body.dealValue),
         productCategory: body.productCategory || 'PROFESSIONAL_TRAINING',
         customerType: body.customerType || 'B2C_PRO_SMK',
