@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import KanbanBoard from '../components/KanbanBoard';
 import MapView from '../components/MapView';
 import DealModal from '../components/DealModal';
@@ -25,7 +26,8 @@ import {
   Download,
   MailCheck,
   History,
-  Mail
+  Mail,
+  BarChart2
 } from 'lucide-react';
 
 interface City {
@@ -78,12 +80,13 @@ export default function DashboardPage() {
   const fetchQuota = async () => {
     try {
       const res = await fetch('/api/settings/smtp/quota');
+      if (!res.ok) return;
       const data = await res.json();
       if (data && typeof data.dailyEmailLimit === 'number') {
         setEmailQuota(data);
       }
     } catch (e) {
-      console.error(e);
+      console.error('Gagal mengambil data kuota:', e);
     }
   };
 
@@ -259,6 +262,7 @@ export default function DashboardPage() {
                   </div>
                 )}
 
+                {/* Tombol Audit Log Pesan */}
                 <button
                   type="button"
                   onClick={() => setIsCommLogsOpen(true)}
@@ -268,8 +272,17 @@ export default function DashboardPage() {
                   <History className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                 </button>
 
+                {/* Fitur Khusus Admin */}
                 {currentUser?.role === 'ADMIN' && (
                   <>
+                    <Link
+                      href="/analytics"
+                      className="p-1.5 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/70 hover:bg-purple-100 dark:bg-purple-950/40 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 transition"
+                      title="Dashboard Analitik Eksekutif (Manajemen)"
+                    >
+                      <BarChart2 className="w-3.5 h-3.5" />
+                    </Link>
+
                     <button
                       type="button"
                       onClick={() => setIsSmtpModalOpen(true)}
@@ -414,7 +427,7 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              {/* User Profile (Tampil di kanan ujung pada layar 2XL) */}
+              {/* User Profile & Actions (Tampil di kanan ujung pada layar 2XL) */}
               <div className="hidden 2xl:flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-700 ml-1 shrink-0">
                 {currentUser && (
                   <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700">
@@ -443,6 +456,14 @@ export default function DashboardPage() {
 
                 {currentUser?.role === 'ADMIN' && (
                   <>
+                    <Link
+                      href="/analytics"
+                      className="p-1.5 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/70 hover:bg-purple-100 dark:bg-purple-950/40 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 transition"
+                      title="Dashboard Analitik Eksekutif (Manajemen)"
+                    >
+                      <BarChart2 className="w-3.5 h-3.5" />
+                    </Link>
+
                     <button
                       type="button"
                       onClick={() => setIsSmtpModalOpen(true)}

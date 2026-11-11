@@ -2,7 +2,7 @@
 
 **digmar-tools** adalah platform CRM & Pipeline Deal Tracker berbasis web yang dirancang khusus untuk memetakan target promosi, memantau pergerakan prospek (*pipeline states*), serta menganalisis konversi penjualan di wilayah **D.I. Yogyakarta (5 wilayah)** dan **Solo Raya (7 wilayah)**.
 
-Aplikasi ini berfokus pada segmentasi produk **Pelatihan Profesional** dan **Mentoring Anak**, dilengkapi visualisasi spasial interaktif Leaflet GIS dengan geofencing radius, engine pengiriman email proposal otomatis terpusat, audit log komunikasi terpadu, serta manajemen multi-user berbasis peran (*Role-Based Access Control*).
+Aplikasi ini berfokus pada segmentasi produk **Pelatihan Profesional** dan **Mentoring Anak**, dilengkapi visualisasi spasial interaktif Leaflet GIS dengan geofencing radius, engine pengiriman email proposal otomatis terpusat, audit log komunikasi terpadu, **Executive Analytics Dashboard** untuk pemantauan manajemen, serta kontrol multi-user berbasis peran (*Role-Based Access Control*).
 
 ---
 
@@ -16,7 +16,27 @@ Aplikasi ini berfokus pada segmentasi produk **Pelatihan Profesional** dan **Men
   - Administrator dapat menambah staf baru, memperbarui data akun/password, serta menghapus staf marketing.
   - Akun aktif diproteksi agar tidak dapat menghapus dirinya sendiri saat sedang login demi konsistensi data.
 
-### 2. Papan Pipeline Kanban & Aksi Cepat
+### 2. Dashboard Analitik Eksekutif (Manajemen & Admin)
+- **Akses Khusus Manajemen / Admin**: Terisolasi pada rute `/analytics` dan diproteksi ketat pada layer backend API & frontend UI.
+- **Filter Multi-Periode Fleksibel**:
+  - Filter berdasarkan **Tahun Tertentu** (misal 2026, 2025, 2024).
+  - Filter **Bulan Spesifik** (Januari s.d. Desember) atau **Semua Bulan (1 Tahun Penuh)**.
+  - Tombol aksi instan *Bulan Ini*.
+- **Metrik Utama (KPIs)**:
+  - **Win Rate Penjualan**: Persentase rasio konversi deal berhasil (`Won / Total Deals`).
+  - **Realisasi Pendapatan (Won)**: Akumulasi nilai riil deal yang sukses closing.
+  - **Potensi Pipeline Tertunda**: Total nilai deal aktif yang masih dalam proses negosiasi.
+  - **Total Aktivitas Outbound**: Akumulasi proposal email terkirim dan chat WhatsApp yang dilancarkan.
+- **Analisis Komparasi Wilayah (DIY vs Solo Raya)**:
+  - Progress bar proporsi kontribusi nilai pipeline antara wilayah D.I. Yogyakarta dan Solo Raya.
+  - Rincian jumlah deal terdata serta realisasi closing per region.
+- **Segmentasi Penjualan & Produk**:
+  - Perbandingan omzet *Pelatihan Profesional* vs *Mentoring Anak*.
+  - Klasifikasi segmen prospek: B2B (Instansi/Kampus), B2C Profesional, dan B2C Siswa/Ortu.
+- **Leaderboard Performa Tim Sales**:
+  - Peringkat staf sales berdasarkan total deal terinput, jumlah deal closing, total nominal closing (IDR), potensi pipeline, dan intensitas kontak prospek.
+
+### 3. Papan Pipeline Kanban & Aksi Cepat
 - **Drag-and-Drop State Deals**: Pemindahan status prospek secara responsif dan *real-time* melintasi 5 tahapan penjualan:
   1. `Lead In` (Prospek Baru Masuk)
   2. `Contacted` (Proses Komunikasi Berjalan)
@@ -29,7 +49,7 @@ Aplikasi ini berfokus pada segmentasi produk **Pelatihan Profesional** dan **Men
 - **Shortcut Email Proposal**: Tombol cepat untuk membuka formulir kirim proposal pada tahap prospek aktif.
 - **Kartu Deal Informatif**: Menampilkan nama kontak klien, instansi, kebutuhan topik spesifik, estimasi nominal, wilayah, label produk (`Pelatihan Pro` vs `Mentoring Anak`), klasifikasi prospek (`B2C SMK`, `B2C Siswa/Ortu`, `B2B Korporat/Kampus`), serta avatar/nama PIC marketing penginput data.
 
-### 3. Engine Email Proposal & Kuota Harian Bersama
+### 4. Engine Email Proposal & Kuota Harian Bersama
 - **Konfigurasi SMTP Terpusat (Admin)**: Pengaturan server SMTP kantor (Gmail App Password / Custom SMTP) disimpan langsung di database via antarmuka modal tanpa perlu mengubah file `.env`.
 - **Kuota Email Harian Terpusat (Shared Quota)**:
   - Pembatasan kuota pengiriman email harian kantor (misal 50 email/hari).
@@ -39,12 +59,12 @@ Aplikasi ini berfokus pada segmentasi produk **Pelatihan Profesional** dan **Men
 - **Kirim Proposal + Lampiran PDF**: Pengiriman silabus dan penawaran resmi dengan lampiran file PDF langsung ke alamat email klien.
 - **Otomasi Perpindahan Tahapan (Stage Automation)**: Deal otomatis bergeser dari tahap *Lead In* / *Contacted* ke tahap *Proposal* saat email berhasil terkirim, sekaligus mencatat ringkasan pengiriman ke riwayat aktivitas deal.
 
-### 4. Audit Log Komunikasi Terpadu (WhatsApp & Email)
+### 5. Audit Log Komunikasi Terpadu (WhatsApp & Email)
 - **Tabel Rekap Komunikasi Tunggal**: Mencatat seluruh riwayat interaksi outbound (kanal Email & WhatsApp).
 - **Detail Jejak Audit**: Meliputi pengirim (PIC marketing/admin), penerima (nomor WA atau alamat email), instansi/klien terkait, subjek email, metadata lampiran dokumen, stempel waktu presisi, dan status keberhasilan (*Terkirim* atau *Gagal* dengan pesan error).
 - **Pencarian & Filter Interaktif**: Filter berdasarkan kanal komunikasi (Semua, Email, WhatsApp) serta kolom pencarian instan nama penerima, instansi, atau nama staf pengirim.
 
-### 5. Pemetaan Spasial Wilayah (Leaflet GIS) & Geofencing Kluster
+### 6. Pemetaan Spasial Wilayah (Leaflet GIS) & Geofencing Kluster
 - **Cakupan 12 Wilayah Presisi**:
   - **D.I. Yogyakarta**: Kota Yogyakarta, Kab. Sleman, Kab. Bantul, Kab. Kulon Progo, Kab. Gunungkidul.
   - **Solo Raya**: Kota Surakarta, Kab. Sukoharjo, Kab. Karanganyar, Kab. Sragen, Kab. Boyolali, Kab. Klaten, Kab. Wonogiri.
@@ -55,16 +75,9 @@ Aplikasi ini berfokus pada segmentasi produk **Pelatihan Profesional** dan **Men
 - **Kontrol Layer & Filter Cepat**: Toggle sakelar radius visual on/off serta menu dropdown pemilihan zona untuk mengarahkan kamera peta (*flyTo*) ke kluster target.
 - **Popup Marker Target**: Menampilkan nama klien, instansi, nominal potensi transaksi, wilayah, dan PIC yang bertanggung jawab.
 
-### 6. Ekspor Laporan Pipeline (CSV / Excel UTF-8)
+### 7. Ekspor Laporan Pipeline (CSV / Excel UTF-8)
 - **Ekspor Data Dinamis**: Mengunduh rekapitulasi data prospek ke dalam file format `.csv` yang disesuaikan dengan filter yang sedang aktif di layar (filter periode bulan, wilayah, maupun PIC marketing).
 - **Dukungan UTF-8 BOM**: Dilengkapi Byte Order Mark (BOM) agar file langsung dapat dibuka rapi di Microsoft Excel, Google Sheets, atau LibreOffice tanpa kendala format font atau karakter rusak.
-
-### 7. Filter Multi-Dimensi & Ringkasan Metrik (KPIs)
-- **Navigasi Filter Komprehensif**: Periode bulan target (`YYYY-MM`), wilayah kabupaten/kota, dan pemilihan staf PIC.
-- **Kartu Indikator Metrik**:
-  - *Total Target Terdata* (jumlah deal aktif terdaftar).
-  - *Total Nilai Pipeline* (akumulasi nilai potensi pendapatan seluruh target).
-  - *Realisasi Closing (Won)* (total riil nominal deal yang berhasil ditutup).
 
 ---
 
@@ -113,7 +126,7 @@ Aplikasi ini berfokus pada segmentasi produk **Pelatihan Profesional** dan **Men
    ```bash
    npm run dev
    ```
-   Buka `http://localhost:3000` di peramban.
+   Buka `http://localhost:3000` di peramban. Akses analitik melalui menu ikon analitik di header atau langsung ke `http://localhost:3000/analytics`.
 
 ---
 
